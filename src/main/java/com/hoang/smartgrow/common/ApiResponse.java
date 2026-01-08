@@ -44,4 +44,12 @@ public class ApiResponse<T> {
         .timestamp(Instant.now())
         .build();
   }
+
+  public static ApiResponse<Void> errorResponse(String code, String message) {
+    return ApiResponse.<Void>builder()
+        .resultCode(code)
+        .resultMessage(message)
+        .timestamp(Instant.now())
+        .build();
+  }
 }

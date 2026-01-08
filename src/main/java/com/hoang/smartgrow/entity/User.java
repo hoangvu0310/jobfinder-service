@@ -1,11 +1,13 @@
 package com.hoang.smartgrow.entity;
 
+import com.hoang.smartgrow.common.BaseAuditableEntity;
 import com.hoang.smartgrow.common.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,9 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "user")
-public class User {
+@SuperBuilder
+@NoArgsConstructor
+public class User extends BaseAuditableEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "user_id")
@@ -30,9 +34,6 @@ public class User {
 
   @Column(name = "role", nullable = false)
   private Role role;
-
-  @Column(name = "created_at", nullable = false)
-  private Instant createdAt;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<RefreshToken> refreshTokens = new ArrayList<>();
