@@ -8,4 +8,6 @@ public interface ErrorCode {
   String NOT_FOUND = "NOT_FOUND";
   String INTERNAL_ERROR = "INTERNAL_ERROR";
   String BAD_REQUEST = "BAD_REQUEST";
+  String INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
+  String EXISTED_USER = "EXISTED_USER";
 }

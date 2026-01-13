@@ -1,6 +1,7 @@
 package com.hoang.smartgrow.config.security;
 
-import com.hoang.smartgrow.common.Const;
+import com.hoang.smartgrow.common.Role;
+import com.hoang.smartgrow.dto.auth.UserTokenPayloadDTO;
 import com.hoang.smartgrow.entity.User;
 import com.hoang.smartgrow.property.AuthTokenProperties;
 import io.jsonwebtoken.Claims;
@@ -28,7 +29,7 @@ public class JwtService {
     return Keys.hmacShaKeyFor(authTokenProperties.getJwtSecret().getBytes());
   }
 
-  public String generateToken(User user) {
+  public String generateToken(@NonNull User user) {
     Key secretKey = getSigningSecretKey();
 
     Instant currentTime = Instant.now();
@@ -36,8 +37,9 @@ public class JwtService {
 
     Map<String, Object> tokenClaims = new HashMap<>();
     tokenClaims.put("userId", user.getUserId());
-    tokenClaims.put("role", user.getRole());
+    tokenClaims.put("username", user.getUsername());
     tokenClaims.put("fullName", user.getFullName());
+    tokenClaims.put("role", user.getRole());
 
     return Jwts.builder()
         .expiration(Date.from(expirationTime))
@@ -50,7 +52,7 @@ public class JwtService {
 
   public Boolean validateToken(String token, String tokenType) {
     try {
-      Claims payload = getTokenPayload(token);
+      UserTokenPayloadDTO payload = getTokenPayload(token);
       return payload != null;
     } catch (Exception e) {
       log.warn("{} token invalid: {}", tokenType, e.getMessage());
@@ -58,14 +60,20 @@ public class JwtService {
     }
   }
 
-  public Claims getTokenPayload(@NonNull String token) {
+  public UserTokenPayloadDTO getTokenPayload(@NonNull String token) {
     String rawToken = token.replace("Bearer ", "").trim();
 
-    return Jwts.parser()
+    Claims payload = Jwts.parser()
         .verifyWith(getSigningSecretKey())
         .build()
         .parseSignedClaims(rawToken)
         .getPayload();
 
+    return UserTokenPayloadDTO.builder()
+        .userId(payload.get("userId", Long.class))
+        .username(payload.get("username", String.class))
+        .fullName(payload.get("fullName", String.class))
+        .role(Role.valueOf(payload.get("role", String.class)))
+        .build();
   }
 }

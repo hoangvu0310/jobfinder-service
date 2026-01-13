@@ -24,7 +24,13 @@ spring:
       schema: iot_service
       maximum-pool-size: 15
       minimum-idle: 1
+      data-source-properties:
+        prepareThreshold: 0
     driver-class-name: org.postgresql.Driver
+
+  jackson:
+    mapper:
+      sort-properties-alphabetically: false
 
 springdoc:
   api-docs:
@@ -33,6 +39,6 @@ springdoc:
     path: "/api/v1/swagger-ui.html"
 
 auth-token:
-  secret: ${JWT_SECRET} # Base64
+  jwt-secret: ${JWT_SECRET} # Base64
   access_token_ttl: 60 # min
   refresh_token_ttl: 43200 # min

@@ -1,15 +1,18 @@
 package com.hoang.smartgrow.exception;
 
-import com.hoang.smartgrow.common.ApiResponse;
+import com.hoang.smartgrow.dto.ApiResponse;
 import com.hoang.smartgrow.common.ErrorCode;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -19,8 +22,16 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiResponse<Void>> handleServiceException(SmartGrowException exception) {
     log.error("Service exception occur with reason: {}", exception.getErrorMessage(), exception);
     return ResponseEntity
-        .badRequest()
+        .status(exception.getStatus())
         .body(ApiResponse.errorResponse(exception.getErrorCode(), exception.getErrorMessage()));
+  }
+
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<ApiResponse<Void>> handleAuthorizationDenied(AuthorizationDeniedException exception) {
+    log.error("Authorization denied occur with reason: {}", exception.getMessage(), exception);
+    return ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .body(ApiResponse.errorResponse(ErrorCode.FORBIDDEN, exception.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -30,9 +41,8 @@ public class GlobalExceptionHandler {
     String message = exception.getBindingResult()
         .getFieldErrors()
         .stream()
-        .findFirst()
-        .map(e -> e.getField() + " " + e.getDefaultMessage())
-        .orElse("Validation error");
+        .map(e -> e.getField() + ": " + e.getDefaultMessage())
+        .collect(Collectors.joining(", "));
 
     return ResponseEntity
         .badRequest()

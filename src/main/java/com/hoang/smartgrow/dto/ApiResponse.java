@@ -1,5 +1,6 @@
-package com.hoang.smartgrow.common;
+package com.hoang.smartgrow.dto;
 
+import com.hoang.smartgrow.common.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

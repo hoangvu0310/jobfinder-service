@@ -12,7 +12,9 @@ public enum ResultCode {
   FORBIDDEN(ErrorCode.FORBIDDEN, "Không có quyền truy cập", HttpStatus.FORBIDDEN),
   NOT_FOUND(ErrorCode.NOT_FOUND, "Không tìm thấy dữ liệu", HttpStatus.NOT_FOUND),
   INTERNAL_ERROR(ErrorCode.INTERNAL_ERROR, "Lỗi hệ thống", HttpStatus.INTERNAL_SERVER_ERROR),
-  BAD_REQUEST(ErrorCode.BAD_REQUEST, "Yêu cầu không hợp lệ", HttpStatus.BAD_REQUEST);
+  BAD_REQUEST(ErrorCode.BAD_REQUEST, "Yêu cầu không hợp lệ", HttpStatus.BAD_REQUEST),
+  INVALID_CREDENTIALS(ErrorCode.INVALID_CREDENTIALS, "Thông tin đăng nhập không chính xác", HttpStatus.UNAUTHORIZED),
+  EXISTED_USER(ErrorCode.EXISTED_USER, "Tài khoản đã tồn tại", HttpStatus.CONFLICT);
 
   private final String code;
   private final String message;

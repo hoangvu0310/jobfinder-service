@@ -1,7 +1,7 @@
 package com.hoang.smartgrow.config.security;
 
 import com.hoang.smartgrow.common.Const;
-import io.jsonwebtoken.Claims;
+import com.hoang.smartgrow.dto.auth.UserTokenPayloadDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,12 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (token != null) {
       if (jwtService.validateToken(token, Const.TokenType.ACCESS)) {
-        Claims payload = jwtService.getTokenPayload(token);
+        UserTokenPayloadDTO payload = jwtService.getTokenPayload(token);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + payload.get("role")));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + payload.getRole()));
 
         UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(payload.getSubject(), null, authorities);
+            new UsernamePasswordAuthenticationToken(payload.getUsername(), null, authorities);
         authenticationToken.setDetails(new WebAuthenticationDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
