@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.hoang'
 version = '0.0.1-SNAPSHOT'
-description = 'smartgrow-service'
+description = 'jobfinder-service'
 
 java {
     toolchain {

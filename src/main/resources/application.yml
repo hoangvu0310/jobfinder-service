@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: smartgrow-service
+    name: jobfinder-service
 
   security:
     user:
