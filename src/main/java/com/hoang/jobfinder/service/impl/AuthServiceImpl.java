@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (passwordEncoderService.matches(signInRequestDTO.getPassword(), user.getPassword())) {
           String accessToken = jwtService.generateToken(user);
-          String refreshToken = refreshTokenService.createRefreshToken(user);
+          String refreshToken = refreshTokenService.createRefreshToken(user, signInRequestDTO.getDeviceId(), signInRequestDTO.getPlatform());
           UserInfoDTO userDTO = jwtService.getTokenPayload(accessToken);
 
           return TokenResponseDTO.builder()

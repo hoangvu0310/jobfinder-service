@@ -1,5 +1,6 @@
 package com.hoang.jobfinder.dto.auth.request;
 
+import com.hoang.jobfinder.common.Enum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -13,4 +14,9 @@ public class SignInRequestDTO {
 
   @NotBlank(message = "Mật khẩu không được để trống")
   private String password;
+
+  @NotBlank(message = "Id của thiết bị không được để trống")
+  private String deviceId;
+
+  private Enum.Platform platform;
 }

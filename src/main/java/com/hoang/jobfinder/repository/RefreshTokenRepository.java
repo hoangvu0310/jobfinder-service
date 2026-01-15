@@ -7,12 +7,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Long> {
   @Query("select r from RefreshToken r where r.user.userId = :userId")
-  Optional<RefreshToken> findRefreshTokenByUserId(@Param("userId") Long userId);
+  List<RefreshToken> findRefreshTokenByUserId(@Param("userId") Long userId);
 
   @Modifying
   @Query("delete from RefreshToken r where r.user.userId = :userId")

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -35,16 +37,16 @@ public class User extends BaseCreatedEntity {
    * 1: Role Employer
    * 2: Role Employee
    */
-  @Column(name = "role", nullable = false)
+  @Column(name = "role", nullable = false, length = 10)
   @Enumerated(EnumType.STRING)
   private Enum.Role role;
 
   @Column(name = "email")
   private String email;
 
-  @Column(name = "phone_number")
+  @Column(name = "phone_number", length = 20)
   private String phoneNumber;
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private RefreshToken refreshTokens;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<RefreshToken> refreshTokens;
 }
