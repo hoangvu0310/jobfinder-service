@@ -45,7 +45,8 @@ public class SecurityConfig {
                     "/api/v1/auth/signUp",
                     "/api/v1/auth/refresh",
                     "/api/v1/auth/guest/**",
-                    "/api/v1/socialAuth/**"
+                    "/api/v1/socialAuth/**",
+                    "/api/v1/test/**"
                 )
                 .permitAll()
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()

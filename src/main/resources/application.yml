@@ -32,6 +32,11 @@ spring:
     mapper:
       sort-properties-alphabetically: false
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB
+
 springdoc:
   api-docs:
     path: "/api/v1/api-docs"

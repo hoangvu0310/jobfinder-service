@@ -14,4 +14,8 @@ public class Const {
     String ACCESS = "Access";
     String REFRESH = "Access";
   }
+
+  public interface StorageBucketFolder {
+    String COMPANY_AVATAR = "company-avatar";
+  }
 }
