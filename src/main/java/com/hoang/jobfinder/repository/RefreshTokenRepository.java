@@ -11,12 +11,9 @@ import java.util.List;
 
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Long> {
-  @Query("select r from RefreshToken r where r.user.userId = :userId")
-  List<RefreshToken> findRefreshTokenByUserId(@Param("userId") Long userId);
-
+  @Query("select r from RefreshToken r where (:isHR = false and r.user.id = :id) or (:isHR and r.hr.id = :id)")
+  List<RefreshToken> findRefreshTokenByUserId(@Param("id") Long userId, @Param("isHR") Boolean isHR);
   @Modifying
-  @Query("delete from RefreshToken r where r.user.userId = :userId")
-  void deleteRefreshTokenByUserId(@Param("userId") Long userId);
-
-
+  @Query("delete from RefreshToken r where (:isHR = false and r.user.id = :id) or (:isHR and r.hr.id = :id)")
+  void deleteRefreshTokenByUserId(@Param("id") Long id, @Param("isHR") Boolean isHR);
 }

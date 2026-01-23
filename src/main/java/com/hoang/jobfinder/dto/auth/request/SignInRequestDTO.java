@@ -1,16 +1,17 @@
 package com.hoang.jobfinder.dto.auth.request;
 
+import com.hoang.jobfinder.common.Const;
 import com.hoang.jobfinder.common.Enum;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
 public class SignInRequestDTO {
 
-  @NotBlank(message = "Tài khoản không được để trống")
-  @Size(min = 6, message = "Tài khoản phải dài ít nhất 6 kí tự")
-  private String username;
+  @Pattern(regexp = Const.Regex.EMAIL, message = "Email không đúng định dạng")
+  @NotBlank(message = "Email không được để trống")
+  private String email;
 
   @NotBlank(message = "Mật khẩu không được để trống")
   private String password;

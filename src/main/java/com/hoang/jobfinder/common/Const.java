@@ -3,6 +3,7 @@ package com.hoang.jobfinder.common;
 public class Const {
 
   public static final String API_PREFIX = "/api/v1";
+  public static final String HR_API_PREFIX = "/api/v1/hr";
 
   public interface Regex {
     // Password: contain at least 1 upper case, 1 lower case, 1 number, no whitespace, min 8 letters

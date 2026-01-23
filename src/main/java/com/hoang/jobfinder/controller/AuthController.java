@@ -6,7 +6,7 @@ import com.hoang.jobfinder.dto.auth.request.RefreshRequestDTO;
 import com.hoang.jobfinder.dto.auth.request.SignInRequestDTO;
 import com.hoang.jobfinder.dto.auth.request.SignUpRequestDTO;
 import com.hoang.jobfinder.dto.auth.response.TokenResponseDTO;
-import com.hoang.jobfinder.dto.auth.response.UserInfoDTO;
+import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
 import com.hoang.jobfinder.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class AuthController {
   }
 
   @PostMapping("/signUp")
-  public ResponseEntity<ApiResponse<UserInfoDTO>> signUp(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) {
+  public ResponseEntity<ApiResponse<AccountInfoDTO>> signUp(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) {
     return ResponseEntity.ok(ApiResponse.successResponse(authService.signUp(signUpRequestDTO)));
   }
 
@@ -37,7 +37,7 @@ public class AuthController {
   }
 
   @GetMapping("userInfo")
-  public ResponseEntity<ApiResponse<UserInfoDTO>> getUserInfo() {
+  public ResponseEntity<ApiResponse<AccountInfoDTO>> getUserInfo() {
     return ResponseEntity.ok(ApiResponse.successResponse(authService.getUserInfo()));
   }
 

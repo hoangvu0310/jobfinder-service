@@ -5,6 +5,7 @@ public class Enum {
     ADMIN,
     USER,
     GUEST,
+    HR_ADMIN,
     HR
   }
 
@@ -14,7 +15,12 @@ public class Enum {
   }
 
   public enum AuthType {
-    USERNAME_AND_PASSWORD,
+    EMAIL_AND_PASSWORD,
     GOOGLE
+  }
+
+  public enum CompanyAssetType {
+    AVATAR,
+    WORKSPACE_IMG
   }
 }

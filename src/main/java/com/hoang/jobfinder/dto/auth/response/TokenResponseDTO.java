@@ -10,5 +10,5 @@ public class TokenResponseDTO {
 
   private String refreshToken;
 
-  private UserInfoDTO user;
+  private AccountInfoDTO user;
 }

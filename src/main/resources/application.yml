@@ -17,6 +17,7 @@ spring:
         format_sql: true
         default_schema: jobspot_service
     show-sql: true
+    open-in-view: false
 
   datasource:
     hikari:

@@ -1,8 +1,8 @@
 package com.hoang.jobfinder.config.security;
 
 import com.hoang.jobfinder.common.Enum;
-import com.hoang.jobfinder.dto.auth.response.UserInfoDTO;
-import com.hoang.jobfinder.entity.User;
+import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
+import com.hoang.jobfinder.entity.base.AccountBaseEntity;
 import com.hoang.jobfinder.property.AuthTokenProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -29,23 +29,21 @@ public class JwtService {
     return Keys.hmacShaKeyFor(authTokenProperties.getJwtSecret().getBytes());
   }
 
-  public String generateToken(@NonNull User user) {
+  public String generateToken(@NonNull AccountBaseEntity user) {
     Key secretKey = getSigningSecretKey();
 
     Instant currentTime = Instant.now();
     Instant expirationTime = currentTime.plusSeconds(authTokenProperties.getAccessTokenTTL() * 60);
 
     Map<String, Object> tokenClaims = new HashMap<>();
-    tokenClaims.put("userId", user.getUserId());
-    tokenClaims.put("username", user.getUsername());
+    tokenClaims.put("userId", user.getId());
     tokenClaims.put("email", user.getEmail());
-    tokenClaims.put("phoneNumber", user.getPhoneNumber());
-    tokenClaims.put("fullName", user.getFullName());
+    tokenClaims.put("authType", user.getAuthType());
     tokenClaims.put("role", user.getRole());
 
     return Jwts.builder()
         .expiration(Date.from(expirationTime))
-        .subject(user.getUsername())
+        .subject(user.getEmail())
         .issuedAt(Date.from(currentTime))
         .claims(tokenClaims)
         .signWith(secretKey)
@@ -54,7 +52,7 @@ public class JwtService {
 
   public Boolean validateToken(String token, String tokenType) {
     try {
-      UserInfoDTO payload = getTokenPayload(token);
+      AccountInfoDTO payload = getTokenPayload(token);
       return payload != null;
     } catch (Exception e) {
       log.warn("{} token invalid: {}", tokenType, e.getMessage());
@@ -62,7 +60,7 @@ public class JwtService {
     }
   }
 
-  public UserInfoDTO getTokenPayload(@NonNull String token) {
+  public AccountInfoDTO getTokenPayload(@NonNull String token) {
     String rawToken = token.replace("Bearer ", "").trim();
 
     Claims payload = Jwts.parser()
@@ -71,12 +69,10 @@ public class JwtService {
         .parseSignedClaims(rawToken)
         .getPayload();
 
-    return UserInfoDTO.builder()
+    return AccountInfoDTO.builder()
         .userId(payload.get("userId", Long.class))
-        .username(payload.get("username", String.class))
         .email(payload.get("email", String.class))
-        .phoneNumber(payload.get("phoneNumber", String.class))
-        .fullName(payload.get("fullName", String.class))
+
         .role(Enum.Role.valueOf(payload.get("role", String.class)))
         .build();
   }

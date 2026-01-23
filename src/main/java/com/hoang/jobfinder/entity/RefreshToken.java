@@ -2,6 +2,7 @@ package com.hoang.jobfinder.entity;
 
 import com.hoang.jobfinder.common.Enum;
 import com.hoang.jobfinder.entity.base.BaseAuditableEntity;
+import com.hoang.jobfinder.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,10 @@ public class RefreshToken extends BaseAuditableEntity {
   private Enum.Platform platform;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "user_id")
   private User user;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "hr_id")
+  private HR hr;
 }

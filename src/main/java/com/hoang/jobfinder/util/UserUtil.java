@@ -1,15 +1,15 @@
 package com.hoang.jobfinder.util;
 
-import com.hoang.jobfinder.dto.auth.response.UserInfoDTO;
+import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
 
 public class UserUtil {
-  public static UserInfoDTO getCurrentUser() {
+  public static AccountInfoDTO getCurrentUser() {
     Object userDTO = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
-    if (userDTO instanceof UserInfoDTO) {
-      return (UserInfoDTO) userDTO;
+    if (userDTO instanceof AccountInfoDTO) {
+      return (AccountInfoDTO) userDTO;
     }
     return null;
   }

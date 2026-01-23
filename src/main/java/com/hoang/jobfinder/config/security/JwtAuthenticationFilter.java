@@ -1,7 +1,7 @@
 package com.hoang.jobfinder.config.security;
 
 import com.hoang.jobfinder.common.Const;
-import com.hoang.jobfinder.dto.auth.response.UserInfoDTO;
+import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (token != null) {
       if (jwtService.validateToken(token, Const.TokenType.ACCESS)) {
-        UserInfoDTO payload = jwtService.getTokenPayload(token);
+        AccountInfoDTO payload = jwtService.getTokenPayload(token);
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + payload.getRole()));
 
