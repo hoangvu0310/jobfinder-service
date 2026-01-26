@@ -11,8 +11,10 @@ import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
 import com.hoang.jobfinder.dto.auth.response.TokenResponseDTO;
 import com.hoang.jobfinder.entity.Company;
 import com.hoang.jobfinder.entity.HR;
+import com.hoang.jobfinder.entity.HRProfile;
 import com.hoang.jobfinder.exception.JobFinderException;
 import com.hoang.jobfinder.repository.CompanyRepository;
+import com.hoang.jobfinder.repository.HRProfileRepository;
 import com.hoang.jobfinder.repository.HRRepository;
 import com.hoang.jobfinder.service.HRAuthService;
 import com.hoang.jobfinder.service.RefreshTokenService;
@@ -37,9 +39,12 @@ public class HRAuthServiceImpl implements HRAuthService {
 
   private CompanyRepository companyRepository;
 
+  private HRProfileRepository hrProfileRepository;
+
   private final Boolean isHR = true;
 
   @Override
+  @Transactional
   public AccountInfoDTO signUpHRAccount(HRSignUpRequestDTO hrSignUpRequestDTO) throws JobFinderException {
     boolean isUserExisted = hrRepository.existsHRByEmail(hrSignUpRequestDTO.getEmail());
     Company company = null;
@@ -61,7 +66,13 @@ public class HRAuthServiceImpl implements HRAuthService {
         .company(company)
         .build();
 
+    HRProfile hrProfile = HRProfile.builder()
+        .fullName(hrSignUpRequestDTO.getFullName())
+        .email(hrSignUpRequestDTO.getEmail())
+        .build();
+
     hrRepository.save(newHR);
+    hrProfileRepository.save(hrProfile);
 
     return AccountInfoDTO.fromUser(newHR);
   }

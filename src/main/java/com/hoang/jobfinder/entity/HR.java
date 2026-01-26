@@ -18,6 +18,10 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 public class HR extends AccountBaseEntity {
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "profile_id")
+  private HRProfile hrProfile;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
