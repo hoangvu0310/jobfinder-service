@@ -33,6 +33,18 @@ public class SecurityConfig {
       "/api/v1/api-docs/**"
   };
 
+  private static final String[] PERMIT_API_LIST = {
+      "/api/v1/auth/signIn",
+      "/api/v1/auth/signUp",
+      "/api/v1/auth/refresh",
+      "/api/v1/auth/guest/**",
+      "/api/v1/socialAuth/**",
+      "/api/v1/test/**",
+      "/api/v1/hr/auth/signIn",
+      "/api/v1/hr/auth/signUp",
+      "/api/v1/hr/auth/refresh",
+  };
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
     return httpSecurity
@@ -40,15 +52,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth -> auth
-                .requestMatchers(
-                    "/api/v1/auth/signIn",
-                    "/api/v1/auth/signUp",
-                    "/api/v1/auth/refresh",
-                    "/api/v1/auth/guest/**",
-                    "/api/v1/socialAuth/**",
-                    "/api/v1/test/**"
-                )
-                .permitAll()
+                .requestMatchers(PERMIT_API_LIST).permitAll()
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .anyRequest().authenticated()
         )
