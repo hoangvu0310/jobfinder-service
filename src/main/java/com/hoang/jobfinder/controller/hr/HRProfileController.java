@@ -7,6 +7,7 @@ import com.hoang.jobfinder.dto.profile.response.HRProfileResponseDTO;
 import com.hoang.jobfinder.service.HRProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,11 +17,13 @@ public class HRProfileController {
   private HRProfileService hrProfileService;
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ROLE_HR_ADMIN', 'ROLE_HR')")
   public ResponseEntity<ApiResponse<HRProfileResponseDTO>> getProfileById(@PathVariable Long id) {
     return ResponseEntity.ok(ApiResponse.successResponse(hrProfileService.findProfileByHRId(id)));
   }
 
   @PatchMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ROLE_HR_ADMIN', 'ROLE_HR')")
   public ResponseEntity<ApiResponse<HRProfileResponseDTO>> editProfile(
       @RequestBody HRProfileEditRequestDTO editRequestDTO,
       @PathVariable Long id
