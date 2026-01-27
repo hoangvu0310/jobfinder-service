@@ -23,7 +23,7 @@ public class HRProfileServiceImpl implements HRProfileService {
   private ModelMapper modelMapper;
 
   @Override
-  public HRProfileResponseDTO findProfileByHRId(Long hrId) {
+  public HRProfileResponseDTO findProfileByHRId() {
     AccountInfoDTO info = UserUtil.getCurrentUser();
 
     HRProfile profile = hrProfileRepository.findHRProfileByUserId(info.getUserId());
@@ -36,7 +36,7 @@ public class HRProfileServiceImpl implements HRProfileService {
 
   @Override
   @Transactional
-  public HRProfileResponseDTO editProfile(HRProfileEditRequestDTO editRequestDTO, Long hrId) {
+  public HRProfileResponseDTO editProfile(HRProfileEditRequestDTO editRequestDTO) {
     AccountInfoDTO info = UserUtil.getCurrentUser();
 
     HRProfile hrProfile = hrProfileRepository.findHRProfileByUserId(info.getUserId());

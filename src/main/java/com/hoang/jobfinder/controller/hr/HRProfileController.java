@@ -16,18 +16,15 @@ import org.springframework.web.bind.annotation.*;
 public class HRProfileController {
   private HRProfileService hrProfileService;
 
-  @GetMapping("/{id}")
+  @GetMapping()
   @PreAuthorize("hasAnyRole('ROLE_HR_ADMIN', 'ROLE_HR')")
-  public ResponseEntity<ApiResponse<HRProfileResponseDTO>> getProfileById(@PathVariable Long id) {
-    return ResponseEntity.ok(ApiResponse.successResponse(hrProfileService.findProfileByHRId(id)));
+  public ResponseEntity<ApiResponse<HRProfileResponseDTO>> getProfileById() {
+    return ResponseEntity.ok(ApiResponse.successResponse(hrProfileService.findProfileByHRId()));
   }
 
-  @PatchMapping("/{id}")
+  @PatchMapping()
   @PreAuthorize("hasAnyRole('ROLE_HR_ADMIN', 'ROLE_HR')")
-  public ResponseEntity<ApiResponse<HRProfileResponseDTO>> editProfile(
-      @RequestBody HRProfileEditRequestDTO editRequestDTO,
-      @PathVariable Long id
-  ) {
-    return ResponseEntity.ok(ApiResponse.successResponse(hrProfileService.editProfile(editRequestDTO, id)));
+  public ResponseEntity<ApiResponse<HRProfileResponseDTO>> editProfile(@RequestBody HRProfileEditRequestDTO editRequestDTO) {
+    return ResponseEntity.ok(ApiResponse.successResponse(hrProfileService.editProfile(editRequestDTO)));
   }
 }
