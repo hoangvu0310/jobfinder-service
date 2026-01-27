@@ -32,6 +32,9 @@ public class WorkExperience {
   @Column(name = "description", columnDefinition = "text")
   private String description;
 
+  @Column(name = "position_in_list")
+  private Integer positionInList;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "profile_id")
   private UserProfile userProfile;

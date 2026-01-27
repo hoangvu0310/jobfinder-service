@@ -30,6 +30,9 @@ public class EducationInfo {
   @Column(name = "end_time")
   private Instant endTime;
 
+  @Column(name = "position_in_list")
+  private Integer positionInList;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "profile_id")
   private UserProfile userProfile;
