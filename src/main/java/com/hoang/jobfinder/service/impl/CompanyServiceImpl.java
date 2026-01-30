@@ -1,4 +1,4 @@
-package com.hoang.jobfinder.service;
+package com.hoang.jobfinder.service.impl;
 
 import com.hoang.jobfinder.common.Enum;
 import com.hoang.jobfinder.common.ErrorCode;
@@ -6,14 +6,16 @@ import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
 import com.hoang.jobfinder.dto.company.request.CompanyInfoPostRequestDTO;
 import com.hoang.jobfinder.dto.company.response.CompanyAssetResponseDTO;
 import com.hoang.jobfinder.dto.company.response.CompanyDTO;
+import com.hoang.jobfinder.dto.company.response.CompanyDraftDTO;
 import com.hoang.jobfinder.entity.HR;
-import com.hoang.jobfinder.entity.company.*;
+import com.hoang.jobfinder.entity.company.Company;
+import com.hoang.jobfinder.entity.company.CompanyDraft;
 import com.hoang.jobfinder.exception.JobFinderException;
 import com.hoang.jobfinder.repository.CompanyDraftRepository;
 import com.hoang.jobfinder.repository.CompanyRepository;
-import com.hoang.jobfinder.repository.DescriptionTagRepository;
 import com.hoang.jobfinder.repository.HRRepository;
-import com.hoang.jobfinder.util.FileUtil;
+import com.hoang.jobfinder.service.CompanyService;
+import com.hoang.jobfinder.service.SupabaseS3Service;
 import com.hoang.jobfinder.util.UserUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,17 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
 public class CompanyServiceImpl implements CompanyService {
   private CompanyRepository companyRepository;
-
-  private DescriptionTagRepository descriptionTagRepository;
 
   private CompanyDraftRepository companyDraftRepository;
 

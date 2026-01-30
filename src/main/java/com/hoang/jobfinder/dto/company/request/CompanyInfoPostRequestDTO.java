@@ -14,6 +14,6 @@ public class CompanyInfoPostRequestDTO {
   private String description;
   private String websiteUrl;
   private Integer companySize;
-  private List<CompanyAssetDTO> companyAssets;
+  private List<CompanyAssetRequestDTO> companyAssets;
   private Set<Long> tagIds;
 }

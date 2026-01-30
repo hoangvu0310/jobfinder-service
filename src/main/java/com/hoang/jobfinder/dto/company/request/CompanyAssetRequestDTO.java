@@ -5,7 +5,7 @@ import com.hoang.jobfinder.common.Enum;
 import lombok.Data;
 
 @Data
-public class CompanyAssetDTO {
+public class CompanyAssetRequestDTO {
   private Long companyAssetId;
   private String assetKey;
   private Enum.CompanyAssetType assetType;

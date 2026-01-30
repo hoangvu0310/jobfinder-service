@@ -6,6 +6,8 @@ public class Const {
 
   public static final String API_PREFIX = "/api/v1";
   public static final String HR_API_PREFIX = "/api/v1/hr";
+  public static final String ADMIN_API_PREFIX = "/api/v1/admin";
+
 
   public static final Integer PRESIGNED_URL_DURATION = 30;  // minutes
 

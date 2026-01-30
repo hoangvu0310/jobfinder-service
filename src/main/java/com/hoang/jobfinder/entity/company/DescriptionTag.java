@@ -1,10 +1,10 @@
 package com.hoang.jobfinder.entity.company;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "description_tag")
 @Builder

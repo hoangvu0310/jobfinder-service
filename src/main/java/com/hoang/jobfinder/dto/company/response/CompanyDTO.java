@@ -1,11 +1,13 @@
 package com.hoang.jobfinder.dto.company.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
+@Builder
 public class CompanyDTO {
   private String companyName;
   private String address;

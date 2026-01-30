@@ -4,7 +4,7 @@ import com.hoang.jobfinder.common.Const;
 import com.hoang.jobfinder.dto.ApiResponse;
 import com.hoang.jobfinder.dto.company.request.CompanyInfoPostRequestDTO;
 import com.hoang.jobfinder.dto.company.response.CompanyDTO;
-import com.hoang.jobfinder.entity.company.CompanyDraftDTO;
+import com.hoang.jobfinder.dto.company.response.CompanyDraftDTO;
 import com.hoang.jobfinder.service.CompanyService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
