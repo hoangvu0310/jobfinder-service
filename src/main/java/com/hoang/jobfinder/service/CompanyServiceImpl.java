@@ -47,46 +47,26 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   @Transactional
-  public CompanyDTO createCompany(CompanyInfoPostRequestDTO requestDTO) {
+  public CompanyDraftDTO createCompany(CompanyInfoPostRequestDTO requestDTO) {
     if (companyRepository.existsCompanyByCompanyName(requestDTO.getCompanyName())) {
       throw new JobFinderException(ErrorCode.BAD_REQUEST, "Tên công ty đã tồn tại");
     }
 
-    Company newCompany = Company.builder()
-        .companyName(requestDTO.getCompanyName())
-        .address(requestDTO.getAddress())
-        .latitude(requestDTO.getLatitude())
-        .longitude(requestDTO.getLongitude())
-        .description(requestDTO.getDescription())
-        .websiteUrl(requestDTO.getWebsiteUrl())
-        .companySize(requestDTO.getCompanySize())
-        .companyStatus(Enum.CompanyStatus.PENDING)
+    AccountInfoDTO hrInfo = UserUtil.getCurrentUser();
+    CompanyDraft draft = CompanyDraft.builder()
+        .payload(objectMapper.writeValueAsString(requestDTO))
+        .status(Enum.CreateEditStatus.PENDING)
+        .actionType(Enum.ActionType.CREATE)
+        .postedBy(hrInfo.getEmail())
+        .postedAt(Instant.now())
         .build();
 
-    AccountInfoDTO hrInfo = UserUtil.getCurrentUser();
-    Set<DescriptionTag> tagList = new HashSet<>(descriptionTagRepository.findAllById(requestDTO.getTagIds()));
-    List<CompanyAsset> assetList = requestDTO.getCompanyAssets()
-        .stream()
-        .map(asset -> {
-            FileUtil.validateImageFileType(asset.getFileType());
+    companyDraftRepository.save(draft);
 
-            return CompanyAsset.builder()
-                .assetKey(asset.getAssetKey())
-                .assetType(asset.getAssetType())
-                .company(newCompany)
-                .build();
-          }
-        )
-        .toList();
+    CompanyDraftDTO dto = modelMapper.map(draft, CompanyDraftDTO.class);
+    dto.setPayload(requestDTO);
 
-
-    newCompany.getTags().addAll(tagList);
-    newCompany.getHrList().add(hrRepository.findHRById(hrInfo.getUserId()));
-    newCompany.getCompanyAssets().addAll(assetList);
-
-    companyRepository.save(newCompany);
-
-    return companyMapper(newCompany);
+    return dto;
   }
 
   @Override
@@ -103,14 +83,18 @@ public class CompanyServiceImpl implements CompanyService {
     CompanyDraft draft = CompanyDraft.builder()
         .companyId(companyId)
         .payload(objectMapper.writeValueAsString(requestDTO))
-        .status(Enum.EditStatus.PENDING)
-        .editedBy(hr.getEmail())
-        .editedAt(Instant.now())
+        .status(Enum.CreateEditStatus.PENDING)
+        .actionType(Enum.ActionType.EDIT)
+        .postedBy(hr.getEmail())
+        .postedAt(Instant.now())
         .build();
 
     companyDraftRepository.save(draft);
 
-    return modelMapper.map(draft, CompanyDraftDTO.class);
+    CompanyDraftDTO dto = modelMapper.map(draft, CompanyDraftDTO.class);
+    dto.setPayload(requestDTO);
+
+    return dto;
   }
 
   @Override

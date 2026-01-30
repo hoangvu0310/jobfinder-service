@@ -19,7 +19,7 @@ public class CompanyController {
 
   @PostMapping("/create")
   @PreAuthorize("hasRole('ROLE_HR_ADMIN')")
-  public ResponseEntity<ApiResponse<CompanyDTO>> createCompany(@RequestBody CompanyInfoPostRequestDTO requestDTO) {
+  public ResponseEntity<ApiResponse<CompanyDraftDTO>> createCompany(@RequestBody CompanyInfoPostRequestDTO requestDTO) {
     return ResponseEntity.ok(ApiResponse.successResponse(companyService.createCompany(requestDTO)));
   }
 

@@ -24,15 +24,14 @@ public class Enum {
     WORKSPACE_IMG
   }
 
-  public enum CompanyStatus {
-    PENDING,
-    APPROVED,
-    HIDDEN
-  }
-
-  public enum EditStatus {
+  public enum CreateEditStatus {
     PENDING,
     APPROVED,
     REJECTED
+  }
+
+  public enum ActionType {
+    CREATE,
+    EDIT
   }
 }

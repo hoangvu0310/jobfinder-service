@@ -45,10 +45,6 @@ public class Company extends BaseAuditableEntity {
   @Column(name = "company_size")
   private Integer companySize;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name ="company_status")
-  private Enum.CompanyStatus companyStatus;
-
   @Builder.Default
   @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CompanyAsset> companyAssets = new ArrayList<>();

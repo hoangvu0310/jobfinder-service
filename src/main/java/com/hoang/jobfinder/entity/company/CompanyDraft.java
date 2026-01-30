@@ -16,7 +16,7 @@ import java.time.Instant;
 public class CompanyDraft {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
+  @Column(name = "draft_id", nullable = false)
   private Long draftId;
 
   @Column(name = "company_id")
@@ -27,17 +27,24 @@ public class CompanyDraft {
 
   @Column(name = "status", length = 20)
   @Enumerated(EnumType.STRING)
-  private Enum.EditStatus status;
+  private Enum.CreateEditStatus status;
+
+  @Column(name = "action_type", length = 20)
+  @Enumerated(EnumType.STRING)
+  private Enum.ActionType actionType;
 
   @Column(name = "edited_by")
-  private String editedBy;
+  private String postedBy;
 
   @Column(name = "edited_at")
-  private Instant editedAt;
+  private Instant postedAt;
 
   @Column(name = "handled_by")
   private String handledBy;
 
   @Column(name = "handled_at")
   private Instant handledAt;
+
+  @Column(name = "reject_reason")
+  private String rejectReason;
 }
