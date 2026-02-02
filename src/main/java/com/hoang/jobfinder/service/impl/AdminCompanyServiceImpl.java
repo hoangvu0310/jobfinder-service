@@ -2,6 +2,7 @@ package com.hoang.jobfinder.service.impl;
 
 import com.hoang.jobfinder.common.Enum;
 import com.hoang.jobfinder.common.ErrorCode;
+import com.hoang.jobfinder.dto.PageableResponse;
 import com.hoang.jobfinder.dto.PagingDTO;
 import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
 import com.hoang.jobfinder.dto.company.request.CompanyInfoPostRequestDTO;
@@ -57,29 +58,33 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
   private SupabaseS3Service supabaseS3Service;
 
   @Override
-  public Page<CompanyDTO> getAllCompany(PagingDTO pagingDTO) {
+  public PageableResponse<CompanyDTO> getAllCompany(PagingDTO pagingDTO) {
     Pageable pageable = PageRequest.of(pagingDTO.getPageNumber(), pagingDTO.getPageSize());
     Page<Company> companyPage = companyRepository.findAll(pageable);
 
-    return companyPage.map(company -> modelMapper.map(company, CompanyDTO.class));
+    Page<CompanyDTO> companyDTOPage = companyPage.map(company -> modelMapper.map(company, CompanyDTO.class));
+    return new PageableResponse<>(companyDTOPage);
   }
 
   @Override
-  public Page<CompanyDraftDTO> getCompanyRequestList(PagingDTO pagingDTO, Enum.ActionType actionType) {
+  public PageableResponse<CompanyDraftDTO> getCompanyRequestList(PagingDTO pagingDTO, Enum.ActionType actionType) {
     Pageable pageable = PageRequest.of(pagingDTO.getPageNumber(), pagingDTO.getPageSize());
     Specification<CompanyDraft> draftSpecification = Specification.where(CompanyDraftSpecification.hasActionType(actionType));
     Page<CompanyDraft> companyDraftPage = companyDraftRepository.findAll(draftSpecification, pageable);
 
-    return companyDraftPage.map(companyDraft -> {
+    Page<CompanyDraftDTO> companyDraftDTOPage = companyDraftPage.map(companyDraft -> {
       CompanyDraftDTO draftDTO = modelMapper.map(companyDraft, CompanyDraftDTO.class);
       draftDTO.setPayload(objectMapper.convertValue(companyDraft.getPayload(), CompanyInfoPostRequestDTO.class));
       return draftDTO;
     });
+
+    return new PageableResponse<>(companyDraftDTOPage);
   }
 
   @Override
   public CompanyDTO getCompanyRequestById(Long draftId) {
-    CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(draftId);
+    CompanyDraft draft = companyDraftRepository.findById(draftId)
+        .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy yêu cầu với id " + draftId));
 
     CompanyInfoPostRequestDTO postRequestDTO = objectMapper.convertValue(draft.getPayload(), CompanyInfoPostRequestDTO.class);
 
@@ -116,7 +121,8 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
   @Override
   @Transactional
   public CompanyDTO approveCreateRequest(Long draftId) {
-    CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(draftId);
+    CompanyDraft draft = companyDraftRepository.findById(draftId)
+        .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy yêu cầu với id " + draftId));
     AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
     draft.setStatus(Enum.CreateEditStatus.APPROVED);
     draft.setHandledBy(adminInfo.getEmail());
@@ -165,7 +171,8 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
   public CompanyDraftDTO rejectRequest(RejectRequestDTO rejectRequestDTO) {
     AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
 
-    CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(rejectRequestDTO.getDraftId());
+    CompanyDraft draft = companyDraftRepository.findById(rejectRequestDTO.getDraftId())
+        .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy yêu cầu với id " + rejectRequestDTO.getDraftId()));
     draft.setStatus(Enum.CreateEditStatus.REJECTED);
     draft.setRejectReason(rejectRequestDTO.getRejectReason());
     draft.setHandledBy(adminInfo.getEmail());
@@ -176,7 +183,8 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
 
   @Override
   public CompanyDTO approveEditRequest(Long draftId) {
-    CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(draftId);
+    CompanyDraft draft = companyDraftRepository.findById(draftId)
+        .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy yêu cầu với id " + draftId));
     AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
     draft.setStatus(Enum.CreateEditStatus.APPROVED);
     draft.setHandledBy(adminInfo.getEmail());

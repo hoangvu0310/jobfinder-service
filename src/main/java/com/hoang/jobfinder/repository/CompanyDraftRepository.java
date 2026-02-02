@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompanyDraftRepository extends JpaRepository<CompanyDraft, Long>, JpaSpecificationExecutor<CompanyDraft> {
-  CompanyDraft findCompanyDraftByDraftId(Long draftId);
+
 }
