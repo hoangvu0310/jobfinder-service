@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -116,7 +117,10 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
   @Transactional
   public CompanyDTO approveCreateRequest(Long draftId) {
     CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(draftId);
+    AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
     draft.setStatus(Enum.CreateEditStatus.APPROVED);
+    draft.setHandledBy(adminInfo.getEmail());
+    draft.setHandledAt(Instant.now());
 
     CompanyInfoPostRequestDTO postRequestDTO = objectMapper.convertValue(draft.getPayload(), CompanyInfoPostRequestDTO.class);
 
@@ -159,9 +163,13 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
   @Override
   @Transactional
   public CompanyDraftDTO rejectRequest(RejectRequestDTO rejectRequestDTO) {
+    AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
+
     CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(rejectRequestDTO.getDraftId());
     draft.setStatus(Enum.CreateEditStatus.REJECTED);
     draft.setRejectReason(rejectRequestDTO.getRejectReason());
+    draft.setHandledBy(adminInfo.getEmail());
+    draft.setHandledAt(Instant.now());
 
     return null;
   }
@@ -169,7 +177,10 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
   @Override
   public CompanyDTO approveEditRequest(Long draftId) {
     CompanyDraft draft = companyDraftRepository.findCompanyDraftByDraftId(draftId);
+    AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
     draft.setStatus(Enum.CreateEditStatus.APPROVED);
+    draft.setHandledBy(adminInfo.getEmail());
+    draft.setHandledAt(Instant.now());
 
     CompanyInfoPostRequestDTO postRequestDTO = objectMapper.convertValue(draft.getPayload(), CompanyInfoPostRequestDTO.class);
 
