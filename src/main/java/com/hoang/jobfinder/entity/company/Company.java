@@ -1,10 +1,13 @@
 package com.hoang.jobfinder.entity.company;
 
-import com.hoang.jobfinder.common.Enum;
 import com.hoang.jobfinder.entity.HR;
 import com.hoang.jobfinder.entity.base.BaseAuditableEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,9 +18,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "company")
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 public class Company extends BaseAuditableEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

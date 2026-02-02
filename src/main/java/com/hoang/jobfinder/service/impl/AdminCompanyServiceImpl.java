@@ -138,6 +138,7 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
         .description(postRequestDTO.getDescription())
         .websiteUrl(postRequestDTO.getWebsiteUrl())
         .companySize(postRequestDTO.getCompanySize())
+        .createdBy(draft.getPostedBy())
         .build();
 
     AccountInfoDTO hrInfo = UserUtil.getCurrentUser();
