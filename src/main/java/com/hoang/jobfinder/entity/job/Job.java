@@ -27,10 +27,6 @@ public class Job extends BaseAuditableEntity {
   @Column(name = "job_id", nullable = false)
   private Long jobId;
 
-  @Column(name = "job_status", length = 20)
-  @Enumerated(EnumType.STRING)
-  private Enum.JobStatus jobStatus;
-
   @Column(name = "job_title", nullable = false, length = 100)
   private String jobTitle;
 

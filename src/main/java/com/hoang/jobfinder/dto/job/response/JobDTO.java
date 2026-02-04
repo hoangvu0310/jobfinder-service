@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Builder
 public class JobDTO {
   private Long jobId;
-  private Enum.JobStatus jobStatus;
   private String jobTitle;
   private String city;
   private Integer minSalary;
@@ -20,6 +19,11 @@ public class JobDTO {
   private String benefit;
   private LocalDate dueDate;
   private LocalDate postedAt;
+  private String workAddress;
+  private Integer employeeNeed;
+  private Enum.ExperienceLevel experienceLevel;
+  private Enum.JobType jobType;
+  private Enum.WorkplaceType workplaceType;
   private Long companyId;
   private String companyName;
   private String companyAvatarUrl;
