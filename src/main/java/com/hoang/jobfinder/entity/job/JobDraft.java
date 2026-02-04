@@ -22,6 +22,9 @@ public class JobDraft {
   @Column(name = "job_id")
   private Long jobId;
 
+  @Column(name = "company_id")
+  private Long companyId;
+
   @Column(name = "request_description", nullable = false)
   private String requestDescription;
 

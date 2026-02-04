@@ -95,6 +95,7 @@ public class HRJobServiceImpl implements HRJobService {
     JobDraft newJobDraft = jobDraftRepository.save(
         JobDraft.builder()
             .requestDescription(requestDTO.getRequestDescription())
+            .companyId(hrRepository.findHRById(hrInfo.getUserId()).getCompany().getCompanyId())
             .payload(objectMapper.writeValueAsString(requestDTO))
             .status(Enum.CreateEditStatus.PENDING)
             .actionType(Enum.ActionType.CREATE)
@@ -110,11 +111,13 @@ public class HRJobServiceImpl implements HRJobService {
   }
 
   @Override
+  @Transactional
   public JobDraftDTO editJob(CreateEditJobRequestDTO requestDTO, Long jobId) {
     AccountInfoDTO hrInfo = UserUtil.getCurrentUser();
     JobDraft newJobDraft = jobDraftRepository.save(
         JobDraft.builder()
             .jobId(jobId)
+            .companyId(hrRepository.findHRById(hrInfo.getUserId()).getCompany().getCompanyId())
             .requestDescription(requestDTO.getRequestDescription())
             .payload(objectMapper.writeValueAsString(requestDTO))
             .status(Enum.CreateEditStatus.PENDING)
