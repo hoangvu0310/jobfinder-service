@@ -53,7 +53,6 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
   @Query("""
         select new com.hoang.jobfinder.dto.job.response.JobDTO(
             j.jobId,
-            j.jobStatus,
             j.jobTitle,
             j.city,
             j.minSalary,
@@ -63,6 +62,11 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
             j.benefit,
             j.dueDate,
             j.postedAt,
+            j.workAddress,
+            j.employeeNeed,
+            j.experienceLevel,
+            j.jobType,
+            j.workplaceType,
             c.companyId,
             c.companyName,
             ca.assetKey
