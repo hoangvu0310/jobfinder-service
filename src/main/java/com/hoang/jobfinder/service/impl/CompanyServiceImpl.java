@@ -16,6 +16,7 @@ import com.hoang.jobfinder.repository.CompanyRepository;
 import com.hoang.jobfinder.repository.HRRepository;
 import com.hoang.jobfinder.service.CompanyService;
 import com.hoang.jobfinder.service.SupabaseS3Service;
+import com.hoang.jobfinder.util.CompanyUtil;
 import com.hoang.jobfinder.util.UserUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -98,19 +99,6 @@ public class CompanyServiceImpl implements CompanyService {
   public CompanyDTO getCompanyInfo(Long companyId) {
     Company company = companyRepository.findCompanyByCompanyId(companyId).get(0);
 
-    return companyMapper(company);
-  }
-
-  private CompanyDTO companyMapper(Company company) {
-    CompanyDTO dto = modelMapper.map(company, CompanyDTO.class);
-    dto.setCompanyAssets(company.getCompanyAssets().stream().map(
-        asset -> CompanyAssetResponseDTO.builder()
-            .assetUrl(supabaseS3Service.generatePublicGetUrl(asset.getAssetKey()))
-            .assetType(asset.getAssetType())
-            .build()
-        ).toList()
-    );
-
-    return dto;
+    return CompanyUtil.companyMapper(company, modelMapper, supabaseS3Service);
   }
 }

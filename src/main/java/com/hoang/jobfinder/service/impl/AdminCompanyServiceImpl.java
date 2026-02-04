@@ -23,6 +23,7 @@ import com.hoang.jobfinder.repository.HRRepository;
 import com.hoang.jobfinder.service.AdminCompanyService;
 import com.hoang.jobfinder.service.SupabaseS3Service;
 import com.hoang.jobfinder.specification.CompanyDraftSpecification;
+import com.hoang.jobfinder.util.CompanyUtil;
 import com.hoang.jobfinder.util.FileUtil;
 import com.hoang.jobfinder.util.UserUtil;
 import lombok.AllArgsConstructor;
@@ -164,7 +165,7 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
 
     companyRepository.save(newCompany);
 
-    return companyMapper(newCompany);
+    return CompanyUtil.companyMapper(newCompany, modelMapper, supabaseS3Service);
   }
 
   @Override
@@ -179,7 +180,10 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
     draft.setHandledBy(adminInfo.getEmail());
     draft.setHandledAt(Instant.now());
 
-    return null;
+    CompanyDraftDTO draftDTO = modelMapper.map(draft, CompanyDraftDTO.class);
+    draftDTO.setPayload(objectMapper.convertValue(draftDTO.getPayload(), CompanyInfoPostRequestDTO.class));
+
+    return draftDTO;
   }
 
   @Override
@@ -227,19 +231,6 @@ public class AdminCompanyServiceImpl implements AdminCompanyService {
         }
     );
 
-    return companyMapper(company);
-  }
-
-  private CompanyDTO companyMapper(Company company) {
-    CompanyDTO dto = modelMapper.map(company, CompanyDTO.class);
-    dto.setCompanyAssets(company.getCompanyAssets().stream().map(
-            asset -> CompanyAssetResponseDTO.builder()
-                .assetUrl(supabaseS3Service.generatePublicGetUrl(asset.getAssetKey()))
-                .assetType(asset.getAssetType())
-                .build()
-        ).toList()
-    );
-
-    return dto;
+    return CompanyUtil.companyMapper(company, modelMapper, supabaseS3Service);
   }
 }
