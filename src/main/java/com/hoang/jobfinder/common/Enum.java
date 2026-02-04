@@ -30,6 +30,33 @@ public class Enum {
     REJECTED
   }
 
+  public enum JobStatus {
+    OPEN,
+    CLOSE
+  }
+
+  public enum ExperienceLevel {
+    INTERN,
+    FRESHER,
+    JUNIOR,
+    MIDDLE,
+    SENIOR,
+    LEADER
+  }
+
+  public enum JobType {
+    PART_TIME,
+    FULL_TIME,
+    INTERN,
+    PROJECT_BASED
+  }
+
+  public enum WorkplaceType {
+    REMOTE,
+    HYBRID,
+    ONSITE
+  }
+
   public enum ActionType {
     CREATE,
     EDIT

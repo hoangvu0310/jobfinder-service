@@ -1,6 +1,7 @@
 package com.hoang.jobfinder.entity.company;
 
 import com.hoang.jobfinder.entity.HR;
+import com.hoang.jobfinder.entity.job.Job;
 import com.hoang.jobfinder.entity.base.BaseAuditableEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -63,4 +64,8 @@ public class Company extends BaseAuditableEntity {
   @Builder.Default
   @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<HR> hrList = new ArrayList<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Job> jobList = new ArrayList<>();
 }
