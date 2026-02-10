@@ -1,15 +1,13 @@
-package com.hoang.jobfinder.dto.job.response;
+package com.hoang.jobfinder.document;
 
 import com.hoang.jobfinder.common.Enum;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.Instant;
-
 @Data
 @Builder
-public class JobDTO {
-  private Long jobId;
+public class JobDocument {
+  private Long id;
   private String jobTitle;
   private String city;
   private Integer minSalary;
@@ -17,14 +15,11 @@ public class JobDTO {
   private String description;
   private String requirement;
   private String benefit;
-  private Instant dueDate;
-  private Instant postedAt;
-  private String workAddress;
-  private Integer employeeNeed;
-  private Enum.ExperienceLevel experienceLevel;
+  private Long dueDateTimestamp;
+  private Long postedAtTimestamp;
   private Enum.JobType jobType;
+  private Enum.ExperienceLevel experienceLevel;
   private Enum.WorkplaceType workplaceType;
-  private Long companyId;
   private String companyName;
   private String companyAvatarUrl;
 }

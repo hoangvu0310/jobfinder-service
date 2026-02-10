@@ -48,3 +48,7 @@ auth-token:
   jwt-secret: ${JWT_SECRET} # Base64
   access_token_ttl: 60 # min
   refresh_token_ttl: 43200 # min
+
+meilisearch:
+  host: http://localhost:7700
+  master-key: ${MEILI_MASTER_KEY}

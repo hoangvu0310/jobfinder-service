@@ -4,7 +4,7 @@ import com.hoang.jobfinder.common.Enum;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Data
 public class CreateEditJobRequestDTO {
@@ -33,7 +33,7 @@ public class CreateEditJobRequestDTO {
 
   private String workAddress;
 
-  private LocalDate dueDate;
+  private Instant dueDate;
 
   private Enum.JobType jobType;
 

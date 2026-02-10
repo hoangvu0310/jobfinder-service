@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,7 +55,7 @@ public class Job extends BaseAuditableEntity {
   private String workAddress;
 
   @Column(name = "due_date")
-  private LocalDate dueDate;
+  private Instant dueDate;
 
   @Column(name = "job_type", length = 20)
   @Enumerated(EnumType.STRING)
@@ -70,7 +70,7 @@ public class Job extends BaseAuditableEntity {
   private Enum.WorkplaceType workplaceType;
 
   @Column(name = "posted_at", nullable = false)
-  private LocalDate postedAt;
+  private Instant postedAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "company_id")

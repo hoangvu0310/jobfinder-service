@@ -40,3 +40,4 @@ out/
 .env.dev
 .env.prod
 **/resources/**.json
+**/controller/test/

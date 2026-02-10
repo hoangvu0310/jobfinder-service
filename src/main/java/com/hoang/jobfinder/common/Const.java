@@ -35,4 +35,8 @@ public class Const {
     String USER_CV = "user-cv";
     String HR_AVATAR = "hr-avatar";
   }
+
+  public interface SearchIndexName {
+    String JOBS = "jobs";
+  }
 }

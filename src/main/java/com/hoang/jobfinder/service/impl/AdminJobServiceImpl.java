@@ -1,7 +1,9 @@
 package com.hoang.jobfinder.service.impl;
 
+import com.hoang.jobfinder.common.Const;
 import com.hoang.jobfinder.common.Enum;
 import com.hoang.jobfinder.common.ErrorCode;
+import com.hoang.jobfinder.document.JobDocument;
 import com.hoang.jobfinder.dto.PageableResponse;
 import com.hoang.jobfinder.dto.PagingDTO;
 import com.hoang.jobfinder.dto.auth.response.AccountInfoDTO;
@@ -17,11 +19,13 @@ import com.hoang.jobfinder.repository.CompanyRepository;
 import com.hoang.jobfinder.repository.JobDraftRepository;
 import com.hoang.jobfinder.repository.JobRepository;
 import com.hoang.jobfinder.service.AdminJobService;
+import com.hoang.jobfinder.service.MeiliSearchService;
 import com.hoang.jobfinder.service.SupabaseS3Service;
 import com.hoang.jobfinder.specification.JobDraftSpecification;
 import com.hoang.jobfinder.util.CompanyUtil;
 import com.hoang.jobfinder.util.UserUtil;
 import lombok.AllArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,6 +49,8 @@ public class AdminJobServiceImpl implements AdminJobService {
   private CompanyRepository companyRepository;
 
   private SupabaseS3Service supabaseS3Service;
+
+  private MeiliSearchService meiliSearchService;
 
   private ModelMapper modelMapper;
 
@@ -106,36 +112,49 @@ public class AdminJobServiceImpl implements AdminJobService {
     Company company = companyRepository.findById(jobDraft.getCompanyId())
         .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy thông tin công ty"));
 
-    Job newJob = Job.builder()
-        .jobTitle(createEditJobRequestDTO.getJobTitle())
-        .city(createEditJobRequestDTO.getCity())
-        .minSalary(createEditJobRequestDTO.getMinSalary())
-        .maxSalary(createEditJobRequestDTO.getMaxSalary())
-        .description(createEditJobRequestDTO.getDescription())
-        .requirement(createEditJobRequestDTO.getRequirement())
-        .benefit(createEditJobRequestDTO.getBenefit())
-        .employeeNeed(createEditJobRequestDTO.getEmployeeNeed())
-        .workAddress(createEditJobRequestDTO.getWorkAddress())
-        .dueDate(createEditJobRequestDTO.getDueDate())
-        .jobType(createEditJobRequestDTO.getJobType())
-        .experienceLevel(createEditJobRequestDTO.getExperienceLevel())
-        .workplaceType(createEditJobRequestDTO.getWorkplaceType())
-        .postedAt(LocalDate.now())
-        .company(company)
-        .updatedBy(jobDraft.getPostedBy())
-        .createdBy(jobDraft.getPostedBy())
+    Job newJob = jobRepository.save(
+        Job.builder()
+            .jobTitle(createEditJobRequestDTO.getJobTitle())
+            .city(createEditJobRequestDTO.getCity())
+            .minSalary(createEditJobRequestDTO.getMinSalary())
+            .maxSalary(createEditJobRequestDTO.getMaxSalary())
+            .description(createEditJobRequestDTO.getDescription())
+            .requirement(createEditJobRequestDTO.getRequirement())
+            .benefit(createEditJobRequestDTO.getBenefit())
+            .employeeNeed(createEditJobRequestDTO.getEmployeeNeed())
+            .workAddress(createEditJobRequestDTO.getWorkAddress())
+            .dueDate(createEditJobRequestDTO.getDueDate())
+            .jobType(createEditJobRequestDTO.getJobType())
+            .experienceLevel(createEditJobRequestDTO.getExperienceLevel())
+            .workplaceType(createEditJobRequestDTO.getWorkplaceType())
+            .postedAt(Instant.now())
+            .company(company)
+            .updatedBy(jobDraft.getPostedBy())
+            .createdBy(jobDraft.getPostedBy())
+            .build()
+    );
+
+    JobDocument document = JobDocument.builder()
+        .id(newJob.getJobId())
+        .jobTitle(newJob.getJobTitle())
+        .city(newJob.getCity())
+        .minSalary(newJob.getMinSalary())
+        .maxSalary(newJob.getMaxSalary())
+        .description(newJob.getDescription())
+        .requirement(newJob.getRequirement())
+        .benefit(newJob.getBenefit())
+        .dueDateTimestamp(newJob.getDueDate().toEpochMilli())
+        .postedAtTimestamp(newJob.getPostedAt().toEpochMilli())
+        .jobType(newJob.getJobType())
+        .experienceLevel(newJob.getExperienceLevel())
+        .workplaceType(newJob.getWorkplaceType())
+        .companyName(company.getCompanyName())
+        .companyAvatarUrl(CompanyUtil.getAvatarUrl(company, supabaseS3Service))
         .build();
 
-    jobRepository.save(newJob);
+    meiliSearchService.indexDocument(Const.SearchIndexName.JOBS, document);
 
-    AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
-    jobDraft.setStatus(Enum.CreateEditStatus.APPROVED);
-    jobDraft.setHandledAt(Instant.now());
-    jobDraft.setHandledBy(adminInfo.getEmail());
-
-    JobDraftDTO jobDraftDTO = modelMapper.map(jobDraft, JobDraftDTO.class);
-    jobDraftDTO.setPayload(createEditJobRequestDTO);
-    return jobDraftDTO;
+    return getJobDraftDTO(jobDraft, createEditJobRequestDTO);
   }
 
   @Override
@@ -162,14 +181,22 @@ public class AdminJobServiceImpl implements AdminJobService {
     job.setWorkplaceType(createEditJobRequestDTO.getWorkplaceType());
     job.setDueDate(createEditJobRequestDTO.getDueDate());
 
-    AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
-    jobDraft.setStatus(Enum.CreateEditStatus.APPROVED);
-    jobDraft.setHandledAt(Instant.now());
-    jobDraft.setHandledBy(adminInfo.getEmail());
+    JobDocument jobDocument = meiliSearchService.getDocument(Const.SearchIndexName.JOBS, job.getJobId(), JobDocument.class);
 
-    JobDraftDTO jobDraftDTO = modelMapper.map(jobDraft, JobDraftDTO.class);
-    jobDraftDTO.setPayload(createEditJobRequestDTO);
-    return jobDraftDTO;
+    jobDocument.setJobTitle(createEditJobRequestDTO.getJobTitle());
+    jobDocument.setCity(createEditJobRequestDTO.getCity());
+    jobDocument.setMaxSalary(createEditJobRequestDTO.getMaxSalary());
+    jobDocument.setDescription(createEditJobRequestDTO.getDescription());
+    jobDocument.setRequirement(createEditJobRequestDTO.getRequirement());
+    jobDocument.setBenefit(createEditJobRequestDTO.getBenefit());
+    jobDocument.setJobType(createEditJobRequestDTO.getJobType());
+    jobDocument.setExperienceLevel(createEditJobRequestDTO.getExperienceLevel());
+    jobDocument.setWorkplaceType(createEditJobRequestDTO.getWorkplaceType());
+    jobDocument.setDueDateTimestamp(createEditJobRequestDTO.getDueDate().toEpochMilli());
+
+    meiliSearchService.updateDocuments(Const.SearchIndexName.JOBS, List.of(jobDocument));
+
+    return getJobDraftDTO(jobDraft, createEditJobRequestDTO);
   }
 
   @Override
@@ -184,6 +211,18 @@ public class AdminJobServiceImpl implements AdminJobService {
     jobDraft.setHandledAt(Instant.now());
     jobDraft.setHandledBy(adminInfo.getEmail());
     jobDraft.setRejectReason(rejectRequestDTO.getRejectReason());
+
+    JobDraftDTO jobDraftDTO = modelMapper.map(jobDraft, JobDraftDTO.class);
+    jobDraftDTO.setPayload(createEditJobRequestDTO);
+    return jobDraftDTO;
+  }
+
+  @NonNull
+  private JobDraftDTO getJobDraftDTO(JobDraft jobDraft, CreateEditJobRequestDTO createEditJobRequestDTO) {
+    AccountInfoDTO adminInfo = UserUtil.getCurrentUser();
+    jobDraft.setStatus(Enum.CreateEditStatus.APPROVED);
+    jobDraft.setHandledAt(Instant.now());
+    jobDraft.setHandledBy(adminInfo.getEmail());
 
     JobDraftDTO jobDraftDTO = modelMapper.map(jobDraft, JobDraftDTO.class);
     jobDraftDTO.setPayload(createEditJobRequestDTO);

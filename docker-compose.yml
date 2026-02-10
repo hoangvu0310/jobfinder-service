@@ -1,0 +1,19 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.35.0
+    ports:
+      - "7700:7700"
+    env_file:
+      - .env.dev
+    volumes:
+      - meili_data:/meili_data
+    networks:
+      - job-finder-network
+    restart: unless-stopped
+
+networks:
+  job-finder-network:
+    driver: bridge
+
+volumes:
+  meili_data:

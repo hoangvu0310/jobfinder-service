@@ -3,7 +3,7 @@ package com.hoang.jobfinder.dto.job.response;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Data
 @Builder
@@ -13,7 +13,7 @@ public class JobPreviewDTO {
   private String city;
   private Integer minSalary;
   private Integer maxSalary;
-  private LocalDate postedAt;
+  private Instant postedAt;
   private String companyName;
   private String companyAvatarUrl;
 }
