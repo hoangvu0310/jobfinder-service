@@ -3,7 +3,6 @@ package com.hoang.jobfinder.entity.job;
 import com.hoang.jobfinder.common.Enum;
 import com.hoang.jobfinder.entity.base.BaseAuditableEntity;
 import com.hoang.jobfinder.entity.company.Company;
-import com.hoang.jobfinder.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -77,11 +76,6 @@ public class Job extends BaseAuditableEntity {
   private Company company;
 
   @Builder.Default
-  @ManyToMany
-  @JoinTable(
-      name = "job_applicant",
-      joinColumns = @JoinColumn(name = "job_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
-  private Set<User> applicantList = new HashSet<>();
+  @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+  Set<JobApplication> jobApplications = new HashSet<>();
 }

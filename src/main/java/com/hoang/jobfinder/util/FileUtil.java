@@ -12,4 +12,10 @@ public class FileUtil {
       throw new JobFinderException(ErrorCode.ILLEGAL_FILE_TYPE, "File không đúng định dạng ảnh jpeg, png, webp");
     }
   }
+
+  public static void validatePDFFileType(String fileType) {
+    if (!fileType.equals("application/pdf")) {
+      throw new JobFinderException(ErrorCode.ILLEGAL_FILE_TYPE, "File không đúng định dạng ảnh jpeg, png, webp");
+    }
+  }
 }

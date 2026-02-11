@@ -4,13 +4,16 @@ import com.hoang.jobfinder.common.Const;
 import com.hoang.jobfinder.common.ErrorCode;
 import com.hoang.jobfinder.dto.PageableResponse;
 import com.hoang.jobfinder.dto.PagingDTO;
+import com.hoang.jobfinder.dto.job.request.JobApplicationDTO;
 import com.hoang.jobfinder.dto.job.request.JobFilterDTO;
 import com.hoang.jobfinder.dto.job.response.JobDTO;
 import com.hoang.jobfinder.dto.job.response.JobPreviewDTO;
 import com.hoang.jobfinder.entity.company.Company;
 import com.hoang.jobfinder.entity.job.Job;
+import com.hoang.jobfinder.entity.job.JobApplication;
 import com.hoang.jobfinder.entity.user.User;
 import com.hoang.jobfinder.exception.JobFinderException;
+import com.hoang.jobfinder.repository.JobApplicationRepository;
 import com.hoang.jobfinder.repository.JobRepository;
 import com.hoang.jobfinder.repository.UserRepository;
 import com.hoang.jobfinder.service.JobService;
@@ -29,7 +32,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 @Slf4j
@@ -40,6 +42,8 @@ public class JobServiceImpl implements JobService {
   private JobRepository jobRepository;
 
   private UserRepository userRepository;
+
+  private JobApplicationRepository jobApplicationRepository;
 
   private ModelMapper modelMapper;
 
@@ -104,14 +108,20 @@ public class JobServiceImpl implements JobService {
   }
 
   @Override
-  public void applyJob(Long jobId) {
-    Job job = jobRepository.findById(jobId)
+  @Transactional
+  public void applyJob(JobApplicationDTO jobApplicationDTO) {
+    Job job = jobRepository.findById(jobApplicationDTO.getJobId())
         .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy thông tin công việc"));
-
-    Set<User> applicantList = job.getApplicantList();
     User user = userRepository.findById(UserUtil.getCurrentUser().getUserId())
         .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy thông tin người dùng"));
-    applicantList.add(user);
+
+    JobApplication jobApplication = JobApplication.builder()
+        .user(user)
+        .job(job)
+        .cvKey(jobApplicationDTO.getCvKey())
+        .build();
+
+    jobApplicationRepository.save(jobApplication);
   }
 
   @Override

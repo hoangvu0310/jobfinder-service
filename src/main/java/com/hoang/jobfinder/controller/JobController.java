@@ -4,6 +4,7 @@ import com.hoang.jobfinder.common.Const;
 import com.hoang.jobfinder.dto.ApiResponse;
 import com.hoang.jobfinder.dto.PageableResponse;
 import com.hoang.jobfinder.dto.PagingDTO;
+import com.hoang.jobfinder.dto.job.request.JobApplicationDTO;
 import com.hoang.jobfinder.dto.job.request.JobFilterDTO;
 import com.hoang.jobfinder.dto.job.response.JobDTO;
 import com.hoang.jobfinder.dto.job.response.JobPreviewDTO;
@@ -25,8 +26,14 @@ public class JobController {
     return ResponseEntity.ok(ApiResponse.successResponse(jobService.findJob(filterDTO, new PagingDTO(page, size))));
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/detail/{id}")
   public ResponseEntity<ApiResponse<JobDTO>> findJobById(@PathVariable("id") Long jobId) {
     return ResponseEntity.ok(ApiResponse.successResponse(jobService.findJobById(jobId)));
+  }
+
+  @PostMapping("/apply")
+  public ResponseEntity<ApiResponse<Void>> findJobById(@RequestBody JobApplicationDTO jobApplicationDTO) {
+    jobService.applyJob(jobApplicationDTO);
+    return ResponseEntity.ok(ApiResponse.successResponse());
   }
 }
