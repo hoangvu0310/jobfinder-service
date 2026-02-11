@@ -4,6 +4,7 @@ import com.hoang.jobfinder.common.Const;
 import com.hoang.jobfinder.common.ErrorCode;
 import com.hoang.jobfinder.dto.PageableResponse;
 import com.hoang.jobfinder.dto.PagingDTO;
+import com.hoang.jobfinder.dto.job.ReportJobRequestDTO;
 import com.hoang.jobfinder.dto.job.request.JobApplicationDTO;
 import com.hoang.jobfinder.dto.job.request.JobFilterDTO;
 import com.hoang.jobfinder.dto.job.response.JobDTO;
@@ -11,9 +12,11 @@ import com.hoang.jobfinder.dto.job.response.JobPreviewDTO;
 import com.hoang.jobfinder.entity.company.Company;
 import com.hoang.jobfinder.entity.job.Job;
 import com.hoang.jobfinder.entity.job.JobApplication;
+import com.hoang.jobfinder.entity.job.JobReport;
 import com.hoang.jobfinder.entity.user.User;
 import com.hoang.jobfinder.exception.JobFinderException;
 import com.hoang.jobfinder.repository.JobApplicationRepository;
+import com.hoang.jobfinder.repository.JobReportRepository;
 import com.hoang.jobfinder.repository.JobRepository;
 import com.hoang.jobfinder.repository.UserRepository;
 import com.hoang.jobfinder.service.JobService;
@@ -44,6 +47,8 @@ public class JobServiceImpl implements JobService {
   private UserRepository userRepository;
 
   private JobApplicationRepository jobApplicationRepository;
+
+  private JobReportRepository jobReportRepository;
 
   private ModelMapper modelMapper;
 
@@ -125,8 +130,20 @@ public class JobServiceImpl implements JobService {
   }
 
   @Override
-  public void reportJob() {
+  @Transactional
+  public void reportJob(ReportJobRequestDTO reportJobRequestDTO) {
+    Job job = jobRepository.findById(reportJobRequestDTO.getJobId())
+        .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy thông tin công việc"));
+    User user = userRepository.findById(UserUtil.getCurrentUser().getUserId())
+        .orElseThrow(() -> new JobFinderException(ErrorCode.NOT_FOUND, "Không tìm thấy thông tin người dùng"));
 
+    JobReport jobReport = JobReport.builder()
+        .reason(reportJobRequestDTO.getReason())
+        .user(user)
+        .job(job)
+        .build();
+
+    jobReportRepository.save(jobReport);
   }
 
   private String[] buildFilter(JobFilterDTO filterDTO) {

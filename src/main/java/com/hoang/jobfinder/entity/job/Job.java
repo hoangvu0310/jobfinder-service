@@ -11,7 +11,9 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -78,4 +80,8 @@ public class Job extends BaseAuditableEntity {
   @Builder.Default
   @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
   Set<JobApplication> jobApplications = new HashSet<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+  List<JobReport> jobReports = new ArrayList<>();
 }

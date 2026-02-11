@@ -3,6 +3,7 @@ package com.hoang.jobfinder.entity.user;
 import com.hoang.jobfinder.entity.RefreshToken;
 import com.hoang.jobfinder.entity.base.AccountBaseEntity;
 import com.hoang.jobfinder.entity.job.JobApplication;
+import com.hoang.jobfinder.entity.job.JobReport;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,4 +38,8 @@ public class User extends AccountBaseEntity {
   @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<CV> cvSet = new HashSet<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  List<JobReport> jobReports = new ArrayList<>();
 }
