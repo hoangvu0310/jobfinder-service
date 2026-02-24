@@ -13,4 +13,5 @@ public class JobFilterDTO {
   private Enum.JobType jobType;
   private Enum.WorkplaceType workplaceType;
   private Enum.JobStatus jobStatus;
+  private Boolean isExpire;
 }

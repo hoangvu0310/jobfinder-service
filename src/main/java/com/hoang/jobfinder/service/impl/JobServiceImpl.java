@@ -32,6 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +66,7 @@ public class JobServiceImpl implements JobService {
     meiliSearchService.initializeIndex(
         Const.SearchIndexName.JOBS,
         new String[] {"jobTitle", "description", "requirement", "benefit", "city", "experienceLevel", "companyName"},
-        new String[] {"city", "minSalary", "maxSalary", "experienceLevel", "workplaceType", "jobType"},
+        new String[] {"city", "minSalary", "maxSalary", "experienceLevel", "workplaceType", "jobType", "dueDateTimestamp"},
         new String[] {"postedAtTimeStamp"},
         null
     );
@@ -172,6 +175,12 @@ public class JobServiceImpl implements JobService {
     if (filterDTO.getWorkplaceType() != null) {
       filters.add("workplaceType = '" + filterDTO.getWorkplaceType() + "'");
     }
+
+    if (filterDTO.getIsExpire() != null) {
+      filters.add("dueDateTimestamp " + (filterDTO.getIsExpire() ? "< " : ">= ") + Instant.now().toEpochMilli());
+    }
+
+    log.info("Filter string: {}", String.join(" AND ", filters));
 
     return new String[] {
         String.join(" AND ", filters)

@@ -67,6 +67,8 @@ public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificatio
             j.experienceLevel,
             j.jobType,
             j.workplaceType,
+            j.createdAt,
+            j.createdBy,
             c.companyId,
             c.companyName,
             ca.assetKey

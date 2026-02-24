@@ -24,6 +24,8 @@ public class JobDTO {
   private Enum.ExperienceLevel experienceLevel;
   private Enum.JobType jobType;
   private Enum.WorkplaceType workplaceType;
+  private Instant createdAt;
+  private String createdBy;
   private Long companyId;
   private String companyName;
   private String companyAvatarUrl;
